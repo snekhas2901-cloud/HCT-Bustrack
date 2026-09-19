@@ -10,7 +10,7 @@ import {
   StatusBar,
   Platform
 } from 'react-native';
-import { MaterialCommunityIcons, Feather } from '@expo/vector-icons'; 
+import { Ionicons, Feather } from '@expo/vector-icons'; 
 
 // --- 1. DATA GENERATION (40 Students across 8 stages) ---
 const STOPS = ['Salem TVS', 'New Bus Stand', 'Kuranguchavadi', 'Mamangam', 'Karuppur', 'Toll Gate', 'Omalur', 'Sikkanampatty'];
@@ -103,7 +103,7 @@ export default function App() {
             <Text style={styles.subTitle}>Stage-by-Stage Attendance</Text>
           </View>
           <View style={styles.iconCircle}>
-            <MaterialCommunityIcons name="bus-school" size={28} color="#38bdf8" />
+            <Ionicons name="bus-outline" size={28} color="#38bdf8" />
           </View>
         </View>
         
@@ -141,7 +141,7 @@ export default function App() {
         renderSectionHeader={({ section }) => (
           <View style={styles.stageHeader}>
             <View style={styles.stageHeaderLeft}>
-              <MaterialCommunityIcons name="bus-stop" size={22} color="#38bdf8" />
+              <Feather name="map-pin" size={20} color="#38bdf8" />
               <Text style={styles.stageTitle}>{section.title}</Text>
             </View>
             <View style={[styles.stageCountBadge, section.isStageComplete && styles.stageCompleteBadge]}>
@@ -167,8 +167,8 @@ export default function App() {
               style={[styles.badge, item.isPresent ? styles.presentBadge : styles.absentBadge]}
               onPress={() => toggleAttendance(item.id)}
             >
-              <MaterialCommunityIcons 
-                name={item.isPresent ? "check-bold" : "close-thick"} 
+              <Feather 
+                name={item.isPresent ? "check" : "x"} 
                 size={16} 
                 color="#ffffff" 
               />
@@ -187,9 +187,9 @@ export default function App() {
           onPress={handleSimulateGPS}
           disabled={isLocked}
         >
-          <MaterialCommunityIcons 
-            name={isLocked ? "lock-check" : "crosshairs-gps"} 
-            size={24} 
+          <Feather 
+            name={isLocked ? "lock" : "target"} 
+            size={22} 
             color="#ffffff" 
             style={{marginRight: 10}}
           />
