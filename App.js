@@ -12,19 +12,23 @@ import {
 } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons'; 
 
-// --- 1. DATA GENERATION (40 Students across 8 stages) ---
+// --- 1. DATA GENERATION (20 Students across 8 stages) ---
 const STOPS = ['Salem TVS', 'New Bus Stand', 'Kuranguchavadi', 'Mamangam', 'Karuppur', 'Toll Gate', 'Omalur', 'Sikkanampatty'];
 const BASE_NAMES = ['Aarav', 'Bhavna', 'Dinesh', 'Harini', 'Kavya', 'Manoj', 'Naveen', 'Pooja', 'Rahul', 'Sneha'];
 
-const generate40Students = () => {
+const generate20Students = () => {
   let list = [];
   let idCounter = 1;
-  STOPS.forEach((stop) => {
-    for (let i = 0; i < 5; i++) { // 5 students per stop * 8 stops = 40 students
-      let name = `${BASE_NAMES[(idCounter - 1) % BASE_NAMES.length]} ${String.fromCharCode(65 + i)}.`;
+  for (let i = 0; i < STOPS.length; i++) {
+    const stop = STOPS[i];
+    const numStudents = i < 4 ? 3 : 2; // Distribute 20 students: 3 for first 4 stops, 2 for last 4 stops
+    for (let j = 0; j < numStudents; j++) {
+      let year = `Year ${(idCounter % 4) + 1}`;
+      let name = `${BASE_NAMES[(idCounter - 1) % BASE_NAMES.length]} ${String.fromCharCode(65 + j)}.`;
       list.push({
         id: idCounter.toString(),
         rollNo: `23CS${100 + idCounter}`,
+        year: year,
         name: name,
         stop: stop,
         avatar: name.substring(0, 2).toUpperCase(),
@@ -32,18 +36,19 @@ const generate40Students = () => {
       });
       idCounter++;
     }
-  });
+  }
   return list;
 };
 
 // --- 2. MAIN APP COMPONENT ---
 export default function App() {
   const [selectedRoute, setSelectedRoute] = useState('Route 3: Salem TVS to Sikkanampatty');
-  const [students, setStudents] = useState(generate40Students());
+  const [students, setStudents] = useState(generate20Students());
   const [isLocked, setIsLocked] = useState(false);
 
   const tripDetails = {
     staffName: 'Prof. Ramesh K.',
+    staffNumber: '+91 98765 43210',
     driverName: 'Mr. Selvam',
   };
 
@@ -77,7 +82,7 @@ export default function App() {
   const handleSimulateGPS = () => {
     Alert.alert(
       '📍 GPS Geofence Triggered',
-      `Bus detected at Hindusthan College Gate (Sikkanampatty).\n\nSummary:\n• Total Boarded: ${presentTotal}/40\n• Absent for the Day: ${40 - presentTotal}\n\nSubmit and lock final attendance?`,
+      `Bus detected at Hindusthan College Gate (Sikkanampatty).\n\nSummary:\n• Total Boarded: ${presentTotal}/${students.length}\n• Absent for the Day: ${students.length - presentTotal}\n\nSubmit and lock final attendance?`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -107,16 +112,22 @@ export default function App() {
           </View>
         </View>
         
-        <View style={styles.routeBadge}>
-          <Feather name="map-pin" size={14} color="#38bdf8" style={{marginRight: 6}} />
-          <Text style={styles.routeText}>{selectedRoute}</Text>
+        <View style={styles.badgesContainer}>
+          <View style={styles.routeBadge}>
+            <Feather name="map-pin" size={14} color="#38bdf8" style={{marginRight: 6}} />
+            <Text style={styles.routeText}>{selectedRoute}</Text>
+          </View>
+          <View style={[styles.routeBadge, { backgroundColor: 'rgba(0, 230, 118, 0.15)', marginTop: 8 }]}>
+            <Feather name="user" size={14} color="#00e676" style={{marginRight: 6}} />
+            <Text style={[styles.routeText, { color: '#00e676' }]}>{tripDetails.staffName} • {tripDetails.staffNumber}</Text>
+          </View>
         </View>
       </View>
 
       {/* Dashboard Stats */}
       <View style={styles.statsCard}>
         <View style={styles.statBox}>
-          <Text style={styles.statNumber}>40</Text>
+          <Text style={styles.statNumber}>{students.length}</Text>
           <Text style={styles.statLabel}>Total</Text>
         </View>
         <View style={styles.divider} />
@@ -126,7 +137,7 @@ export default function App() {
         </View>
         <View style={styles.divider} />
         <View style={styles.statBox}>
-          <Text style={[styles.statNumber, { color: '#ff4a4a' }]}>{40 - presentTotal}</Text>
+          <Text style={[styles.statNumber, { color: '#ff4a4a' }]}>{students.length - presentTotal}</Text>
           <Text style={styles.statLabel}>Absent</Text>
         </View>
       </View>
@@ -160,7 +171,7 @@ export default function App() {
             </View>
             <View style={styles.studentInfo}>
               <Text style={styles.studentName}>{item.name}</Text>
-              <Text style={styles.studentMeta}>{item.rollNo}</Text>
+              <Text style={styles.studentMeta}>{item.rollNo} • {item.year}</Text>
             </View>
             
             <TouchableOpacity
